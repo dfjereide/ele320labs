@@ -7,14 +7,26 @@
 <body style="font-family:sans-serif;">
   <h1>ELE320 Labs</h1>
   <iframe
-    src="pdfjs/web/viewer.html?file=/docs/ele320lab2_1.pdf#toolbar=0"
+    id="pdf-frame"
+    src="about:blank"
     width="100%"
     height="1000px"
     style="border:none;">
   </iframe>
   <ul>
-    <li><a href="docs/ele320lab2_1.pdf">ELE320 Lab 2.1 - PDF download</a></li>
-    <li><a href="pdfjs/web/viewer.html?file=/docs/ele320lab2_1.pdf">ELE320 Lab 2.1 - View with PDF.js</a></li>
+    <li><a id="download-link" href="#">ELE320 Lab 2.1 - PDF download</a></li>
+    <li><a id="viewer-link" href="#">ELE320 Lab 2.1 - View with PDF.js</a></li>
   </ul>
+  <script>
+    (function () {
+      const pdfUrl = new URL("docs/ele320lab2_1.pdf", window.location.href);
+      const viewerUrl = new URL("pdfjs/web/viewer.html", window.location.href);
+      viewerUrl.searchParams.set("file", pdfUrl.href);
+
+      document.getElementById("pdf-frame").src = `${viewerUrl.href}#toolbar=0`;
+      document.getElementById("download-link").href = pdfUrl.href;
+      document.getElementById("viewer-link").href = viewerUrl.href;
+    })();
+  </script>
 </body>
 </html>
