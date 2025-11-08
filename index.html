@@ -5,17 +5,12 @@
   <title>ELE320 Lab PDFs</title>
 </head>
 <body style="font-family:sans-serif;">
-  <h1>ELE320 Labs</h1>
   <iframe
     id="pdf-frame"
     src="about:blank"
     width="100%"
     style="border:none;display:block;">
   </iframe>
-  <ul>
-    <li><a id="download-link" href="#">ELE320 Lab 2.1 - PDF download</a></li>
-    <li><a id="viewer-link" href="#">ELE320 Lab 2.1 - View with PDF.js</a></li>
-  </ul>
   <script>
     (function () {
       const pdfUrl = new URL("manuals/ele320lab2_1.pdf", window.location.href);
@@ -24,8 +19,6 @@
 
       const iframe = document.getElementById("pdf-frame");
       iframe.src = `${viewerUrl.href}#toolbar=0`;
-      document.getElementById("download-link").href = pdfUrl.href;
-      document.getElementById("viewer-link").href = viewerUrl.href;
       iframe.addEventListener("load", () => {
         const viewerWindow = iframe.contentWindow;
         const viewerDoc = viewerWindow.document;
