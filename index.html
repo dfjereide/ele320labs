@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ELE320 Lab PDFs</title>
+</head>
 <body style="font-family:sans-serif;">
   <h1>ELE320 Labs</h1>
   <iframe
@@ -8,6 +12,10 @@
     width="100%"
     style="border:none;display:block;">
   </iframe>
+  <ul>
+    <li><a id="download-link" href="#">ELE320 Lab 2.1 - PDF download</a></li>
+    <li><a id="viewer-link" href="#">ELE320 Lab 2.1 - View with PDF.js</a></li>
+  </ul>
   <script>
     (function () {
       const pdfUrl = new URL("manuals/ele320lab2_1.pdf", window.location.href);
@@ -22,21 +30,33 @@
         const viewerWindow = iframe.contentWindow;
         const viewerDoc = viewerWindow.document;
 
-        const resize = () => {
-          iframe.style.height = `${viewerDoc.documentElement.scrollHeight}px`;
-        };
-
         viewerWindow.PDFViewerApplication.initializedPromise.then(() => {
-          const container = viewerDoc.getElementById("viewerContainer");
-          container.style.height = "auto";
-          container.style.overflow = "visible";
-          viewerDoc.documentElement.style.overflow = "visible";
-          viewerDoc.body.style.overflow = "visible";
+          const styleEl = viewerDoc.createElement("style");
+          styleEl.textContent = `
+            html, body, #outerContainer, #mainContainer, #viewerContainer {
+              position: static !important;
+              height: auto !important;
+              min-height: 0 !important;
+              overflow: visible !important;
+            }
+          `;
+          viewerDoc.head.appendChild(styleEl);
+
+          const resize = () => {
+            iframe.style.height = `${viewerDoc.body.scrollHeight}px`;
+          };
+          resize();
 
           const bus = viewerWindow.PDFViewerApplication.eventBus;
           bus.on("pagesinit", resize);
           bus.on("pagerendered", resize);
           bus.on("scalechanging", resize);
+
+          if ("ResizeObserver" in viewerWindow) {
+            const container = viewerDoc.getElementById("viewerContainer");
+            const observer = new viewerWindow.ResizeObserver(resize);
+            observer.observe(container);
+          }
         });
       });
     })();
