@@ -10,8 +10,7 @@
     id="pdf-frame"
     src="about:blank"
     width="100%"
-    height="1000px"
-    style="border:none;">
+    style="border:none;display:block;">
   </iframe>
   <ul>
     <li><a id="download-link" href="#">ELE320 Lab 2.1 - PDF download</a></li>
@@ -23,9 +22,31 @@
       const viewerUrl = new URL("pdfjs/web/viewer.html", window.location.href);
       viewerUrl.searchParams.set("file", pdfUrl.href);
 
-      document.getElementById("pdf-frame").src = `${viewerUrl.href}#toolbar=0`;
+      const iframe = document.getElementById("pdf-frame");
+      iframe.src = `${viewerUrl.href}#toolbar=0`;
       document.getElementById("download-link").href = pdfUrl.href;
       document.getElementById("viewer-link").href = viewerUrl.href;
+      iframe.addEventListener("load", () => {
+        const viewerWindow = iframe.contentWindow;
+        const viewerDoc = viewerWindow.document;
+
+        const resize = () => {
+          iframe.style.height = `${viewerDoc.documentElement.scrollHeight}px`;
+        };
+
+        viewerWindow.PDFViewerApplication.initializedPromise.then(() => {
+          const container = viewerDoc.getElementById("viewerContainer");
+          container.style.height = "auto";
+          container.style.overflow = "visible";
+          viewerDoc.documentElement.style.overflow = "visible";
+          viewerDoc.body.style.overflow = "visible";
+
+          const bus = viewerWindow.PDFViewerApplication.eventBus;
+          bus.on("pagesinit", resize);
+          bus.on("pagerendered", resize);
+          bus.on("scalechanging", resize);
+        });
+      });
     })();
   </script>
 </body>
